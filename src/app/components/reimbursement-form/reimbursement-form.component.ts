@@ -8,7 +8,7 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+// import { HttpClientModule } from '@angular/common/http';
 import { ReceiptService } from '../../services/receipt.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { ReceiptService } from '../../services/receipt.service';
   standalone: true,
   templateUrl: './reimbursement-form.component.html',
   styleUrls: ['./reimbursement-form.component.css'],
-  imports: [ReactiveFormsModule, HttpClientModule, CommonModule]
+  imports: [ReactiveFormsModule, CommonModule]
 })
 export class ReimbursementFormComponent {
   reimbursementForm: FormGroup;
@@ -68,15 +68,7 @@ export class ReimbursementFormComponent {
         this.fileInputRef.nativeElement.value = '';
         return;
       }
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(file);
-      reader.onload = () => {
-        const byteArray = new Uint8Array(reader.result as ArrayBuffer);
-        const bytes = new Uint8Array(byteArray);
-        this.reimbursementForm.patchValue({
-          file: Array.from(bytes)
-        });
-      }
+      this.reimbursementForm.patchValue({ file });
     }
   }
 
@@ -94,6 +86,11 @@ export class ReimbursementFormComponent {
           this.submitError = false;
           this.reimbursementForm.reset();
           this.fileInputRef.nativeElement.value = '';
+
+          // Hide the success message after 5 seconds
+          setTimeout(() => {
+            this.submitSuccess = false;
+          }, 5000);
         },
         error: () => {
           this.submitSuccess = false;
