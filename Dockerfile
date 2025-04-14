@@ -1,17 +1,15 @@
-# Build Angular app
-FROM node:20 AS build
+# Stage 1: Build Angular App
+FROM node:20 as builder
 WORKDIR /app
-
-COPY . .
+COPY package.json package-lock.json ./
 RUN npm install
-RUN npm run build --prod
+COPY . .
+RUN npm run build -- --configuration production
 
-# Serve with NGINX
-FROM nginx:alpine
-COPY --from=build /app/dist/receipt-reimbursement-ui /usr/share/nginx/html
-
-# Optional: custom nginx config
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Stage 2: Serve with http-server
+FROM node:20
+WORKDIR /app
+RUN npm install -g http-server
+COPY --from=builder /app/dist/receipt-reimbursement-ui/browser/ ./
+EXPOSE 4200
+CMD ["http-server", "/app", "-p", "4200", "--fallback", "index.html"]
