@@ -1,59 +1,107 @@
-# ReceiptReimbursementUi
+# Receipt Reimbursement - Angular Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.7.
+## Overview
+This is the Angular 19 frontend for the Receipt Reimbursement System. It provides a user-friendly interface for submitting and viewing reimbursement requests. The application communicates with a .NET Web API backend and is containerized using Docker for easy orchestration.
 
-## Development server
+---
+
+## Tech Stack
+- **Framework:** Angular 19
+- **Package Manager:** npm
+- **Styling:** Bootstrap 5
+- **Containerization:** Docker
+
+---
+
+## Folder Structure
+```
+receipt-reimbursement-ui/
+├── src/                   # Main source code folder
+│   ├── app/               # Angular components and services
+│   ├── assets/            # Static files
+│   ├── environments/      # Environment configs
+│   ├── index.html         # Main HTML file
+│   └── main.ts            # App entry point
+├── Dockerfile             # Docker build file
+├── angular.json           # Angular CLI config
+├── package.json           # NPM dependencies
+└── README.md              # Project documentation
+```
+
+---
+
+## Setup Instructions
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Development Server
 
 To start a local development server, run:
 
 ```bash
 ng serve
 ```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+or 
 
 ```bash
-ng generate component component-name
+npm start
 ```
+The npm start will run ng serve which will defined the scripts. 
+Runs the app in development mode. Navigate to `http://localhost:4200`.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+### 3. Production Build
 ```bash
-ng generate --help
+npm run build -- --configuration production
+```
+This will output the production files into:
+```
+dist/receipt-reimbursement-ui
 ```
 
-## Building
-
-To build the project run:
-
+### 4. Run via Docker
+Ensure you have a production build before running:
 ```bash
-ng build
+npm run build -- --configuration production
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
+Then build and run the Docker container:
 ```bash
-ng test
+docker build -t receipt-frontend .
+docker run -p 4200:80 receipt-frontend
+```
+The application will be available at `http://localhost:4200`
+
+---
+
+## Environment
+No `.env` file is needed specifically for Angular.
+All environment configurations are defined in:
+```
+src/environments/environment.ts
+```
+Make sure the API base URL matches your backend:
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:5267/api'
+};
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## API Integration
+This frontend connects to the backend endpoints:
+- **Submit Receipt:** `POST /api/Receipt`
+- **Get All Receipts:** `GET /api/Receipt`
+- **View Receipt File:** Triggered on clicking "View" in the table (opens/downloads file)
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Notes
+- Ensure the backend API is running on the expected port (`http://localhost:5267`) before using the frontend.
+- The production build should be re-run if you make any frontend changes before Dockerizing.
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- This frontend is part of a full-stack application and is intended to be deployed alongside the backend and SQL Server using Docker Compose.
