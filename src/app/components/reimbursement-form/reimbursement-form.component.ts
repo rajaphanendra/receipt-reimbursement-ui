@@ -22,6 +22,7 @@ export class ReimbursementFormComponent {
   reimbursementForm: FormGroup;
   submitSuccess = false;
   submitError = false;
+  isSubmitting = false;
 
   today: string = new Date().toISOString().split('T')[0]; // For disabling future dates
 
@@ -74,6 +75,8 @@ export class ReimbursementFormComponent {
 
   onSubmit() {
     if (this.reimbursementForm.valid) {
+      this.isSubmitting = true;
+
       const formData = new FormData();
       formData.append('date', this.reimbursementForm.get('date')?.value);
       formData.append('amount', this.reimbursementForm.get('amount')?.value);
@@ -86,15 +89,18 @@ export class ReimbursementFormComponent {
           this.submitError = false;
           this.reimbursementForm.reset();
           this.fileInputRef.nativeElement.value = '';
+          this.isSubmitting = false;
 
           // Hide the success message after 5 seconds
           setTimeout(() => {
             this.submitSuccess = false;
+            this.isSubmitting = false;
           }, 5000);
         },
         error: () => {
           this.submitSuccess = false;
           this.submitError = true;
+          this.isSubmitting = false;
         }
       });
     }
